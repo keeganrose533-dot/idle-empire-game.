@@ -1,0 +1,129 @@
+/* Reset & base */
+html, body {
+  margin:0; padding:0; width:100%; height:100%;
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(to bottom, #0a0d14, #1c1f28);
+  color:white;
+  display:flex; flex-direction:column; overflow:hidden;
+}
+
+/* Top bar HUD */
+.topbar {
+  display:flex; justify-content:space-between; align-items:center;
+  background: rgba(30,35,45,0.9); height:12%;
+  padding:0 10px; box-sizing:border-box; flex-wrap:wrap;
+  border-bottom: 2px solid #2f80ed;
+  font-size:1em;
+}
+.stats {
+  display:flex; gap:15px; flex-wrap:wrap;
+}
+.settings {
+  display:flex; gap:8px;
+}
+.settings button {
+  background:#2f3b50; border:none; color:#2f80ed; padding:6px 10px;
+  border-radius:10px; cursor:pointer; font-weight:bold;
+  box-shadow:0 0 6px #2f80ed;
+  transition:0.2s;
+}
+.settings button:hover { background:#3c4b65; box-shadow:0 0 12px #2f80ed; }
+
+/* Main game container */
+#gameContainer {
+  flex:1; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; overflow:hidden; padding:5px;
+}
+
+/* Pages */
+.page { display:none; flex-direction:column; align-items:center; justify-content:flex-start; width:100%; height:100%; overflow:hidden; }
+.page.active { display:flex; }
+
+/* Main Click Button */
+.main-btn {
+  width:55%; max-width:300px; height:35%;
+  font-size:2.4em; border:none; border-radius:25px;
+  background: linear-gradient(to bottom, #2f80ed, #1c4ed8);
+  color:white; cursor:pointer; box-shadow:0 5px 15px rgba(0,0,0,0.5);
+  transition: all 0.1s;
+}
+.main-btn:hover { transform: scale(1.05); box-shadow:0 8px 20px rgba(0,0,0,0.7); }
+.main-btn:active { transform: scale(0.95); box-shadow:0 3px 10px rgba(0,0,0,0.4); }
+
+/* XP bar */
+.progress {
+  width:80%; height:10px; background:rgba(255,255,255,0.15);
+  border-radius:15px; margin-top:8px; overflow:hidden;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+}
+.fill {
+  height:100%; transition:0.2s; background:#2f80ed;
+  box-shadow: 0 0 8px #2f80ed;
+  border-radius:15px 0 0 15px;
+}
+
+/* Combo */
+p { font-size:1.3em; margin:5px 0; text-align:center; text-shadow:0 0 5px #2f80ed; }
+
+/* Rebirth / Ascend buttons */
+.action-btn {
+  margin:5px; padding:12px 25px; font-size:1.2em;
+  background: linear-gradient(to bottom, #ffb74d, #ffa000);
+  border:none; border-radius:15px; color:white; cursor:pointer;
+  box-shadow:0 4px 12px rgba(0,0,0,0.5); transition:0.2s;
+}
+.action-btn:hover { transform: scale(1.05); box-shadow:0 6px 20px rgba(0,0,0,0.7); }
+
+/* Shop / Achievements Cards */
+.card {
+  background: linear-gradient(to bottom, #1f2330, #2c3143);
+  margin:8px auto; padding:15px; border-radius:20px;
+  width:90%; max-width:400px; font-size:1em;
+  box-shadow:0 4px 12px rgba(0,0,0,0.5);
+}
+button.card-btn {
+  padding:12px; font-size:1em; border-radius:12px;
+  width:100%; background:#2f3b50; color:#2f80ed; border:none;
+  cursor:pointer; box-shadow:0 3px 8px rgba(0,0,0,0.4);
+  transition:0.2s;
+}
+button.card-btn:hover { background:#3c4b65; box-shadow:0 5px 12px rgba(0,0,0,0.6); }
+
+/* Navbar */
+.navbar {
+  display:flex; justify-content:space-around; align-items:center;
+  background: rgba(30,35,45,0.95); height:12%;
+  border-top:2px solid #2f80ed;
+}
+.navbar button {
+  flex:1; font-size:1.2em; padding:12px 0;
+  border-radius:0; background:#2f3b50; color:#2f80ed; border:none;
+  cursor:pointer; transition:0.2s;
+}
+.navbar button:hover { background:#3c4b65; box-shadow:0 0 10px #2f80ed; }
+
+/* Floating numbers */
+.floating {
+  position:absolute; font-weight:bold; color:#ffeb3b;
+  animation:floatUp 1s ease-out forwards; pointer-events:none;
+  text-shadow:0 0 8px #ffeb3b;
+}
+@keyframes floatUp { 0% {opacity:1; transform:translateY(0);} 100% {opacity:0; transform:translateY(-50px);} }
+
+/* Toasts */
+.toast {
+  position:fixed; top:20px; left:50%; transform:translateX(-50%);
+  background:#2f80ed; color:white; padding:15px 25px;
+  border-radius:12px; font-size:1em; opacity:0.9; z-index:999;
+  animation:fadeInOut 2s forwards;
+  box-shadow:0 4px 12px rgba(0,0,0,0.6);
+}
+@keyframes fadeInOut { 0% {opacity:0; transform:translateY(-20px);} 10%,90% {opacity:0.9; transform:translateY(0);} 100% {opacity:0; transform:translateY(-20px);} }
+
+/* Mobile adjustments */
+@media(max-width:768px){
+  .main-btn { width:70%; height:40%; font-size:2em; }
+  .topbar { font-size:0.95em; height:14%; }
+  .navbar button { font-size:1em; padding:14px 0; }
+  .progress { height:12px; }
+}
