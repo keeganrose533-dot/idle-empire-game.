@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Cyber Clash: Infinite Xtreme</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="game-container">
+
+  <div id="header">
+    <h1>Cyber Clash</h1>
+    <div id="xp-bar">
+      <div id="xp-fill"></div>
+      <span id="xp-text">XP: 0 / 100</span>
+    </div>
+    <div id="energy-display">Energy: 0</div>
+    <div id="level-display">Level: 1</div>
+    <div id="rebirth-display">Rebirths: 0</div>
+    <div id="prestige-display">Prestige: 0</div>
+  </div>
+
+  <div id="core-container">
+    <button id="click-core">PULSE CORE</button>
+  </div>
+
+  <div id="tabs">
+    <button class="tab-btn" data-tab="upgrades">Upgrades</button>
+    <button class="tab-btn" data-tab="leaderboard">Leaderboard</button>
+    <button class="tab-btn" data-tab="factions">Factions</button>
+    <button class="tab-btn" data-tab="stats">Stats</button>
+    <button class="tab-btn" data-tab="achievements">Achievements</button>
+  </div>
+
+  <div id="tab-contents">
+    <div id="upgrades" class="tab-content"></div>
+    <div id="leaderboard" class="tab-content"></div>
+    <div id="factions" class="tab-content"></div>
+    <div id="stats" class="tab-content"></div>
+    <div id="achievements" class="tab-content"></div>
+  </div>
+
+</div>
+<script src="script.js"></script>
+</body>
+</html>
