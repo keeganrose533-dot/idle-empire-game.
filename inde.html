@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Idle Empire</title>
+<style>
+  body { margin:0; font-family:sans-serif; background:#111; color:#eee; display:flex; flex-direction:column; align-items:center; }
+  .top-bar, .bottom-bar { width:100%; display:flex; justify-content:space-around; background:#222; padding:10px; }
+  button { padding:15px 25px; font-size:18px; margin:5px; border:none; border-radius:5px; cursor:pointer; background:#ff9800; color:#111; transition:0.1s; }
+  button:hover{background:#ffa733;}
+  #clickBtn { font-size:24px; padding:25px 50px; width:80%; max-width:400px; }
+  #xpContainer { width:80%; max-width:400px; background:#333; height:25px; border-radius:5px; margin:10px 0; }
+  #xpFill { height:100%; width:0%; background:#4caf50; border-radius:5px; transition:0.3s; }
+  .page{display:none;width:100%;max-width:600px;}
+  .page.active{display:block;}
+  #shopContent .card{background:#222; padding:10px; margin:5px 0; border-radius:5px;}
+  #shopContent .card button{width:100%;}
+  .floating{position:absolute;color:#fff;font-weight:bold;}
+  .toast{position:fixed;top:10px;right:10px;background:#444;padding:10px;border-radius:5px;opacity:0.9;z-index:9999;}
+  ul{list-style:none;padding:0;}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div>Money: <span id="money">0</span></div>
+  <div>Level: <span id="level">1</span></div>
+  <div>XP: <span id="xp">0</span>/<span id="xpReq">100</span></div>
+</div>
+
+<button id="clickBtn" onclick="clickMoney()">Click Me!</button>
+<div id="xpContainer"><div id="xpFill"></div></div>
+
+<div class="bottom-bar">
+  <button onclick="show('shopPage')">Shop</button>
+  <button onclick="show('statsPage')">Stats</button>
+  <button onclick="show('clanPage')">Clan</button>
+  <button onclick="show('leaderboardPage')">Leaderboard</button>
+</div>
+
+<!-- Pages -->
+<div id="shopPage" class="page">
+  <h2>Shop</h2>
+  <div id="shopContent"></div>
+</div>
+
+<div id="statsPage" class="page">
+  <h2>Stats</h2>
+  <p>Rebirths: <span id="rebirths">0</span></p>
+  <p>Ascensions: <span id="ascensions">0</span></p>
+  <p>Combo: <span id="combo">0</span></p>
+  <p>Tokens: <span id="tokens">0</span></p>
+  <p>Total Clicks: <span id="totalClicks">0</span></p>
+  <p>Total Money: <span id="totalMoney">0</span></p>
+  <p>Total Auto Clicks: <span id="totalAuto">0</span></p>
+  <h3>Achievements</h3>
+  <ul id="achList"></ul>
+  <button onclick="resetGame()">Reset Game</button>
+</div>
+
+<div id="clanPage" class="page">
+  <h2>Clan</h2>
+  <p>Name: <span id="clanName">None</span></p>
+  <p>Level: <span id="clanLevel">0</span></p>
+  <p>Total Money: <span id="clanTotalMoney">0</span></p>
+  <ul id="clanMembers"></ul>
+  <input id="clanInput" placeholder="Clan Name">
+  <button onclick="createClan()">Create Clan</button>
+  <button onclick="leaveClan()">Leave Clan</button>
+</div>
+
+<div id="leaderboardPage" class="page">
+  <h2>Leaderboards</h2>
+  <h3>Players</h3>
+  <ul id="playerLeaderboard"></ul>
+  <p>Your Rank: <span id="playerRank">1</span></p>
+  <h3>Clans</h3>
+  <ul id="clanLeaderboard"></ul>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
