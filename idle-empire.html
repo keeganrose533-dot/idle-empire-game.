@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Idle Empire X</title>
+<style>
+body{
+  margin:0;
+  background:radial-gradient(circle at center,#111 0%,#000 100%);
+  color:#fff;
+  font-family:Arial;
+  text-align:center;
+}
+.top{
+  display:flex;
+  justify-content:space-around;
+  background:#111;
+  padding:10px;
+  font-weight:bold;
+}
+button{
+  padding:15px 25px;
+  font-size:18px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  background:linear-gradient(45deg,#ff9800,#ff5722);
+  color:white;
+  margin:5px;
+  transition:0.15s;
+}
+button:hover{transform:scale(1.05);}
+#clickBtn{
+  font-size:26px;
+  width:80%;
+  max-width:400px;
+  margin-top:20px;
+}
+#xpBar{
+  width:80%;
+  max-width:400px;
+  height:20px;
+  background:#222;
+  margin:10px auto;
+  border-radius:10px;
+  overflow:hidden;
+}
+#xpFill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#00ff88,#00cc66);
+  transition:0.2s;
+}
+.page{display:none;margin-top:10px;}
+.page.active{display:block;}
+ul{list-style:none;padding:0;}
+.toast{
+  position:fixed;
+  top:10px;
+  right:10px;
+  background:#222;
+  padding:10px;
+  border-radius:6px;
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div>Money: <span id="money">0</span></div>
+  <div>Level: <span id="level">1</span></div>
+  <div>Rebirths: <span id="rebirths">0</span></div>
+</div>
+
+<button id="clickBtn" onclick="clickMoney()">CLICK</button>
+<div id="xpBar"><div id="xpFill"></div></div>
+
+<div>
+  <button onclick="show('shop')">Shop</button>
+  <button onclick="show('clan')">Clan</button>
+  <button onclick="show('leaderboard')">Leaderboard</button>
+</div>
+
+<div id="shop" class="page">
+  <h2>Shop</h2>
+  <button onclick="buyClick()">Upgrade Click (<span id="clickCost"></span>)</button>
+  <button onclick="buyAuto()">Auto Click (<span id="autoCost"></span>)</button>
+  <button onclick="rebirth()">Rebirth</button>
+</div>
+
+<div id="clan" class="page">
+  <h2>Clan</h2>
+  <div>Clan: <span id="clanName">None</span></div>
+  <ul id="clanMembers"></ul>
+  <button onclick="createClan()">Create Clan</button>
+</div>
+
+<div id="leaderboard" class="page">
+  <h2>Leaderboard</h2>
+  <ul id="leaderboardList"></ul>
+</div>
+
+<script>
+let player={
+  name:"You",
+  money:0,
+  level:1,
+  xp:0,
+  rebirths:0,
+  clickPower:1,
+  auto:0,
+  clickCost:20,
+  autoCost:100
+};
+
+let bots=[];
+let botNames=["Nova","Zyro","Apex","Vortex","Cipher","Blaze"];
+let personalities=["Aggressive","Lazy","Balanced"];
+
+function createBots(){
+  botNames.forEach(n=>{
+    bots.push({
+      name:n,
+      money:0,
+      level:1,
+      rebirths:0,
+      personality:personalities[Math.floor(Math.random()*3)]
+    });
+  });
+}
+createBots();
+
+let clan={name:null,members:[]};
+
+function format(n){
+  if(n>=1e6)return (n/1e6).toFixed(1)+"M";
+  if(n>=1e3)return (n/1e3).toFixed(1)+"K";
+  return Math.floor(n);
+}
+
+function xpNeeded(){
+  return Math.floor(100*Math.pow(1.15,player.level-1));
+}
+
+function clickMoney(){
+  let crit=Math.random()<0.1?2:1;
+  let gain=player.clickPower*crit*(1+player.rebirths*0.1);
+  player.money+=gain;
+  player.xp+=gain;
+
+  if(crit===2){
+    document.body.style.background="#222";
+    setTimeout(()=>document.body.style.background="",100);
+  }
+
+  if(player.xp>=xpNeeded()){
+    player.xp-=xpNeeded();
+    player.level++;
+  }
+
+  update();
+}
+
+function buyClick(){
+  if(player.money>=player.clickCost){
+    player.money-=player.clickCost;
+    player.clickPower++;
+    player.clickCost=Math.floor(player.clickCost*1.4);
+    update();
+  }
+}
+
+function buyAuto(){
+  if(player.money>=player.autoCost){
+    player.money-=player.autoCost;
+    player.auto++;
+    player.autoCost=Math.floor(player.autoCost*1.6);
+    update();
+  }
+}
+
+function rebirth(){
+  if(player.level>=20){
+    player.rebirths++;
+    player.level=1;
+    player.money=0;
+    player.xp=0;
+    player.clickPower=1;
+    update();
+  }
+}
+
+function show(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+function createClan(){
+  if(!clan.name){
+    clan.name="Empire";
+    clan.members=[player.name];
+  }
+  update();
+}
+
+function updateLeaderboard(){
+  let all=[player,...bots];
+  all.sort((a,b)=>b.money-a.money);
+  let list=document.getElementById("leaderboardList");
+  list.innerHTML="";
+  all.forEach((p,i)=>{
+    let li=document.createElement("li");
+    li.innerText=(i+1)+". "+p.name+" - "+format(p.money);
+    list.appendChild(li);
+  });
+}
+
+function update(){
+  document.getElementById("money").innerText=format(player.money);
+  document.getElementById("level").innerText=player.level;
+  document.getElementById("rebirths").innerText=player.rebirths;
+  document.getElementById("clickCost").innerText=format(player.clickCost);
+  document.getElementById("autoCost").innerText=format(player.autoCost);
+  document.getElementById("xpFill").style.width=(player.xp/xpNeeded()*100)+"%";
+  document.getElementById("clanName").innerText=clan.name||"None";
+  document.getElementById("clanMembers").innerHTML=clan.members.map(m=>"<li>"+m+"</li>").join("");
+  updateLeaderboard();
+}
+
+setInterval(()=>{
+  player.money+=player.auto*(1+player.rebirths*0.1);
+  bots.forEach(b=>{
+    let growth=b.personality==="Aggressive"?1.2:b.personality==="Lazy"?0.8:1;
+    b.money+=growth;
+  });
+  update();
+},1000);
+
+let last=localStorage.getItem("lastTime");
+if(last){
+  let diff=(Date.now()-last)/1000;
+  player.money+=diff*player.auto;
+}
+setInterval(()=>localStorage.setItem("lastTime",Date.now()),2000);
+
+update();
+</script>
+
+</body>
+</html>
