@@ -1,0 +1,70 @@
+body {
+  margin: 0;
+  font-family: Arial;
+  background: linear-gradient(to bottom, #0f0f1f, #111133);
+  color: white;
+  overflow: hidden;
+}
+
+#topBar {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+  background: #111;
+  font-size: 14px;
+}
+
+#game {
+  text-align: center;
+  height: calc(100vh - 50px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+#pulseButton {
+  font-size: 26px;
+  padding: 30px;
+  margin-top: 20px;
+  background: #00f0ff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+#xpContainer {
+  width: 80%;
+  height: 20px;
+  background: #333;
+  margin: 10px auto;
+  border-radius: 10px;
+}
+
+#xpBar {
+  height: 100%;
+  width: 0%;
+  background: #00ff99;
+  border-radius: 10px;
+}
+
+#tabs {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+}
+
+#tabs button {
+  padding: 10px;
+  background: #222;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.tab {
+  margin-top: 10px;
+}
+
+.hidden {
+  display: none;
+}
