@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Idle Empire Game</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Top HUD -->
+<div class="topbar">
+  <div class="stats">
+    <span>Money: <span id="money">0</span></span>
+    <span>Level: <span id="level">1</span></span>
+    <span>XP: <span id="xp">0</span>/<span id="xpReq">100</span></span>
+    <span>Rebirths: <span id="rebirths">0</span></span>
+    <span>Ascensions: <span id="ascensions">0</span></span>
+    <span>Tokens: <span id="tokens">0</span></span>
+    <span>Combo: <span id="combo">0</span></span>
+  </div>
+  <div class="settings">
+    <button onclick="show('statsPage')">Stats</button>
+    <button onclick="resetGame()">Reset</button>
+  </div>
+</div>
+
+<!-- Main Game Area -->
+<div id="gameContainer">
+
+  <!-- Main Clicker Page -->
+  <div id="mainPage" class="page active">
+    <button id="clickBtn" class="main-btn" onclick="clickMoney()">Click!</button>
+    <div class="progress">
+      <div id="xpFill" class="fill"></div>
+    </div>
+    <div class="actions">
+      <button class="action-btn" onclick="rebirth()">Rebirth</button>
+      <button class="action-btn" onclick="ascend()">Ascend</button>
+    </div>
+  </div>
+
+  <!-- Shop Page -->
+  <div id="shopPage" class="page">
+    <div id="shopContent"></div>
+  </div>
+
+  <!-- Achievements Page -->
+  <div id="achPage" class="page">
+    <ul id="achList"></ul>
+  </div>
+
+  <!-- Stats Page -->
+  <div id="statsPage" class="page">
+    <p>Total Clicks: <span id="totalClicks">0</span></p>
+    <p>Total Money Earned: <span id="totalMoney">0</span></p>
+    <p>Total Auto Clicks Bought: <span id="totalAuto">0</span></p>
+    <p>Your Player Rank: <span id="playerRank">1</span></p>
+    <button onclick="show('mainPage')">Back</button>
+  </div>
+
+  <!-- Clan Page -->
+  <div id="clanPage" class="page">
+    <h3>Clan: <span id="clanName">None</span></h3>
+    <p>Clan Level: <span id="clanLevel">0</span></p>
+    <p>Clan Total Money: <span id="clanTotalMoney">0</span></p>
+    <p>Members:</p>
+    <ul id="clanMembers"></ul>
+    <input id="clanInput" placeholder="Clan Name">
+    <button onclick="createClan()">Create Clan</button>
+    <button onclick="leaveClan()">Leave Clan</button>
+    <button onclick="show('mainPage')">Back</button>
+  </div>
+
+  <!-- Leaderboards Page -->
+  <div id="leaderboardPage" class="page">
+    <h3>Player Leaderboard</h3>
+    <ul id="playerLeaderboard"></ul>
+    <h3>Clan Leaderboard</h3>
+    <ul id="clanLeaderboard"></ul>
+    <button onclick="show('mainPage')">Back</button>
+  </div>
+
+</div>
+
+<!-- Bottom Navbar -->
+<div class="navbar">
+  <button onclick="show('mainPage')">Main</button>
+  <button onclick="show('shopPage'); renderShop()">Shop</button>
+  <button onclick="show('achPage'); renderAchievements()">Achievements</button>
+  <button onclick="show('clanPage'); renderClan()">Clan</button>
+  <button onclick="show('leaderboardPage'); updateLeaderboards()">Leaderboard</button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
