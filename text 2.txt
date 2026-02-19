@@ -1,0 +1,100 @@
+body{
+  margin:0;
+  font-family:Segoe UI,sans-serif;
+  background:#0f1115;
+  color:white;
+  text-align:center;
+}
+.topbar{
+  background:#181c24;
+  padding:12px;
+  display:flex;
+  justify-content:space-around;
+  font-size:14px;
+}
+.page{display:none;padding:25px 15px 90px;}
+.active{display:block;}
+.main-btn{
+  padding:40px 70px;
+  font-size:26px;
+  border:none;
+  border-radius:15px;
+  background:#2f80ed;
+  color:white;
+  cursor:pointer;
+  transition:0.1s;
+}
+.main-btn:active{transform:scale(0.95);}
+.card{
+  background:#1b2028;
+  margin:15px auto;
+  padding:20px;
+  border-radius:12px;
+  width:260px;
+}
+button{
+  padding:10px 15px;
+  border:none;
+  border-radius:8px;
+  background:#2a2f3a;
+  color:white;
+  cursor:pointer;
+}
+button:hover{background:#3a4150;}
+.navbar{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  background:#181c24;
+  display:flex;
+  justify-content:space-around;
+  padding:10px 0;
+}
+.progress{
+  width:80%;
+  height:15px;
+  background:#222;
+  margin:10px auto;
+  border-radius:10px;
+  overflow:hidden;
+}
+.fill{
+  height:100%;
+  width:0%;
+  background:#2f80ed;
+  transition:0.2s;
+}
+.small{font-size:12px;color:#aaa;}
+
+/* Floating numbers */
+.floating{
+  position:absolute;
+  font-weight:bold;
+  color:#2f80ed;
+  animation:floatUp 1s ease-out forwards;
+  pointer-events:none;
+}
+@keyframes floatUp{
+  0%{opacity:1;transform:translateY(0px);}
+  100%{opacity:0;transform:translateY(-50px);}
+}
+
+/* Toast notifications */
+.toast{
+  position:fixed;
+  top:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#2f80ed;
+  color:white;
+  padding:10px 20px;
+  border-radius:10px;
+  opacity:0.9;
+  z-index:999;
+  animation:fadeInOut 2s forwards;
+}
+@keyframes fadeInOut{
+  0%{opacity:0;transform:translateY(-20px);}
+  10%,90%{opacity:0.9;transform:translateY(0);}
+  100%{opacity:0;transform:translateY(-20px);}
+}
