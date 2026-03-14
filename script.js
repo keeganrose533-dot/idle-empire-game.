@@ -1,158 +1,160 @@
-// ======= Variables =======
-let energy = 0;
-let level = 1;
-let xp = 0;
-let xpNeeded = 100;
-let rebirths = 0;
-let prestige = 0;
-let multiplier = 1;
-let drones = 0;
-let totalClicks = 0;
-
-let upgrades = [
-  {name:"Click Boost", cost:10, level:0, effect:function(){multiplier += 0.5}},
-  {name:"Drone", cost:50, level:0, effect:function(){drones +=1}}
+const LANDMARKS = [
+  { name: "New York City, USA", lon: -74.006, lat: 40.7128, altitude: 1600 },
+  { name: "London, UK", lon: -0.1278, lat: 51.5072, altitude: 1500 },
+  { name: "Tokyo, Japan", lon: 139.6917, lat: 35.6895, altitude: 1500 },
+  { name: "Paris, France", lon: 2.3522, lat: 48.8566, altitude: 1500 },
+  { name: "Sydney, Australia", lon: 151.2093, lat: -33.8688, altitude: 1800 },
+  { name: "Cape Town, South Africa", lon: 18.4241, lat: -33.9249, altitude: 1800 },
+  { name: "Rio de Janeiro, Brazil", lon: -43.1729, lat: -22.9068, altitude: 1800 },
+  { name: "Dubai, UAE", lon: 55.2708, lat: 25.2048, altitude: 1500 }
 ];
 
-let bots = [];
-let factions = [];
-let achievements = [];
+const statusEl = document.getElementById("status");
+const citySelectEl = document.getElementById("city-select");
+const buildingsToggleEl = document.getElementById("buildings-toggle");
+const outerSpaceBtn = document.getElementById("outer-space-btn");
+const streetLevelBtn = document.getElementById("street-level-btn");
 
-// ======= Initialize Bots =======
-function initBots(count=500){
-  const personalities = ["Grindy","Casual","Lazy","Strategic"];
-  for(let i=0;i<count;i++){
-    bots.push({
-      name:"Bot"+(i+1),
-      energy:Math.floor(Math.random()*1000),
-      level:Math.floor(Math.random()*5)+1,
-      xp:Math.floor(Math.random()*50),
-      rebirths:Math.floor(Math.random()*2),
-      prestige:0,
-      personality: personalities[Math.floor(Math.random()*personalities.length)]
-    });
-  }
+function setStatus(message) {
+  statusEl.textContent = message;
 }
 
-// ======= Click Core =======
-document.getElementById("click-core").addEventListener("click",()=>{
-  let gain = 1*multiplier;
-  energy += gain;
-  xp += gain;
-  totalClicks++;
-  checkLevelUp();
-  updateUI();
+function populateCities() {
+  LANDMARKS.forEach((city, idx) => {
+    const option = document.createElement("option");
+    option.value = String(idx);
+    option.textContent = city.name;
+    citySelectEl.append(option);
+  });
+}
+
+if (!window.Cesium) {
+  setStatus("Cesium failed to load. Please check network/CDN access.");
+  throw new Error("Cesium is unavailable.");
+}
+
+const viewer = new Cesium.Viewer("viewer", {
+  animation: false,
+  baseLayerPicker: false,
+  geocoder: false,
+  timeline: false,
+  navigationHelpButton: false,
+  homeButton: true,
+  sceneModePicker: false,
+  infoBox: false,
+  fullscreenButton: false,
+  terrainProvider: new Cesium.EllipsoidTerrainProvider(),
+  imageryProvider: new Cesium.OpenStreetMapImageryProvider({
+    url: "https://tile.openstreetmap.org/",
+    credit: "© OpenStreetMap contributors"
+  }),
+  requestRenderMode: true,
+  maximumRenderTimeChange: Infinity,
+  msaaSamples: 1
 });
 
-// ======= Level Up =======
-function checkLevelUp(){
-  while(xp >= xpNeeded){
-    xp -= xpNeeded;
-    level++;
-    xpNeeded = Math.floor(xpNeeded*1.1);
+viewer.scene.globe.enableLighting = false;
+viewer.scene.globe.depthTestAgainstTerrain = true;
+viewer.scene.fog.enabled = false;
+viewer.scene.skyAtmosphere.show = true;
+viewer.scene.globe.tileCacheSize = 96;
+viewer.scene.postProcessStages.fxaa.enabled = true;
+viewer.scene.screenSpaceCameraController.inertiaSpin = 0.75;
+viewer.scene.screenSpaceCameraController.inertiaTranslate = 0.75;
+viewer.resolutionScale = 0.75;
+
+let buildingsTileset = null;
+function applyLiteMode() {
+  viewer.scene.globe.enableLighting = false;
+  viewer.scene.fog.enabled = false;
+  viewer.scene.globe.tileCacheSize = 96;
+  viewer.resolutionScale = 0.75;
+  if (buildingsTileset) {
+    buildingsTileset.show = false;
+  }
+  buildingsToggleEl.checked = false;
+  buildingsToggleEl.disabled = true;
+  buildingsToggleEl.title = "Lite mode is always on, so 3D buildings are disabled.";
+  viewer.scene.requestRender();
+}
+
+async function enableTerrainIfAvailable() {
+  try {
+    const terrainProvider = await Cesium.createWorldTerrainAsync({
+      requestVertexNormals: false,
+      requestWaterMask: false
+    });
+    viewer.terrainProvider = terrainProvider;
+    setStatus("Global terrain enabled. Lite mode is always on for performance.");
+  } catch (error) {
+    setStatus("Using lightweight terrain fallback. Lite mode is always on for performance.");
+    console.warn(error);
   }
 }
 
-// ======= Tabs =======
-const tabs = document.querySelectorAll(".tab-btn");
-tabs.forEach(tab => {
-  tab.addEventListener("click",()=>{
-    document.querySelectorAll(".tab-content").forEach(tc=>tc.style.display="none");
-    document.getElementById(tab.dataset.tab).style.display="block";
-    renderTab(tab.dataset.tab);
+async function loadBuildingsLayer() {
+  try {
+    buildingsTileset = await Cesium.createOsmBuildingsAsync({
+      enableShowOutline: false
+    });
+    viewer.scene.primitives.add(buildingsTileset);
+    applyLiteMode();
+    setStatus("Lite mode is active. 3D buildings are disabled for smoother performance.");
+  } catch (error) {
+    buildingsToggleEl.checked = false;
+    buildingsToggleEl.disabled = true;
+    setStatus("3D buildings unavailable in this environment; globe remains interactive.");
+    console.error(error);
+  }
+}
+
+function flyToLandmark(landmark, duration = 2.6) {
+  viewer.camera.flyTo({
+    destination: Cesium.Cartesian3.fromDegrees(landmark.lon, landmark.lat, landmark.altitude),
+    orientation: {
+      heading: Cesium.Math.toRadians(20),
+      pitch: Cesium.Math.toRadians(-35),
+      roll: 0
+    },
+    duration
   });
+  setStatus(`Flying to ${landmark.name}...`);
+}
+
+function flyToOuterSpace() {
+  viewer.camera.flyTo({
+    destination: Cesium.Cartesian3.fromDegrees(8, 20, 22_000_000),
+    orientation: {
+      heading: 0,
+      pitch: Cesium.Math.toRadians(-90),
+      roll: 0
+    },
+    duration: 3
+  });
+  setStatus("Outer-space view.");
+}
+
+populateCities();
+applyLiteMode();
+enableTerrainIfAvailable();
+loadBuildingsLayer();
+flyToOuterSpace();
+
+citySelectEl.addEventListener("change", (event) => {
+  const idx = Number(event.target.value);
+  if (!Number.isNaN(idx) && LANDMARKS[idx]) {
+    flyToLandmark(LANDMARKS[idx]);
+  }
 });
 
-// ======= Render Tabs =======
-function renderTab(tab){
-  if(tab=="upgrades"){
-    let html = "";
-    upgrades.forEach((u,i)=>{
-      html += `<button onclick="buyUpgrade(${i})">${u.name} Lvl ${u.level} - Cost: ${u.cost}</button><br>`;
-    });
-    document.getElementById("upgrades").innerHTML = html;
-  }
-  if(tab=="leaderboard"){
-    let sorted = [...bots].sort((a,b)=>b.energy-a.energy);
-    sorted.unshift({name:"You", energy});
-    let html = "<ol>";
-    sorted.slice(0,10).forEach(p=>html+=`<li>${p.name}: ${Math.floor(p.energy)}</li>`);
-    html+="</ol>";
-    document.getElementById("leaderboard").innerHTML = html;
-  }
-  if(tab=="stats"){
-    document.getElementById("stats").innerHTML = `
-      <p>Total Clicks: ${totalClicks}</p>
-      <p>Level: ${level}</p>
-      <p>XP: ${Math.floor(xp)}/${xpNeeded}</p>
-      <p>Energy: ${Math.floor(energy)}</p>
-      <p>Drones: ${drones}</p>
-      <p>Rebirths: ${rebirths}</p>
-      <p>Prestige: ${prestige}</p>
-    `;
-  }
-}
+outerSpaceBtn.addEventListener("click", () => {
+  flyToOuterSpace();
+});
 
-// ======= Buy Upgrade =======
-function buyUpgrade(i){
-  let u = upgrades[i];
-  if(energy >= u.cost){
-    energy -= u.cost;
-    u.level++;
-    u.effect();
-    u.cost = Math.floor(u.cost*1.5);
-    updateUI();
-  }
-}
-
-// ======= Update UI =======
-function updateUI(){
-  document.getElementById("energy-display").innerText = "Energy: "+Math.floor(energy);
-  document.getElementById("level-display").innerText = "Level: "+level;
-  document.getElementById("rebirth-display").innerText = "Rebirths: "+rebirths;
-  document.getElementById("prestige-display").innerText = "Prestige: "+prestige;
-  let xpPercent = Math.min(100, xp/xpNeeded*100);
-  document.getElementById("xp-fill").style.width = xpPercent+"%";
-  document.getElementById("xp-text").innerText = `XP: ${Math.floor(xp)}/${xpNeeded}`;
-}
-
-// ======= Auto Energy from Drones =======
-setInterval(()=>{
-  energy += drones*0.5;
-  xp += drones*0.5;
-  checkLevelUp();
-  updateUI();
-},1000);
-
-// ======= Bots Auto Progress =======
-setInterval(()=>{
-  bots.forEach(b=>{
-    let gain = 1*(Math.random()+0.5);
-    b.energy += gain;
-    b.xp += gain;
-    while(b.xp >= 50){
-      b.xp -= 50;
-      b.level++;
-    }
-  });
-  renderTab("leaderboard");
-},2000);
-
-// ======= Autosave =======
-function saveGame(){
-  const saveData = {energy, level, xp, xpNeeded, rebirths, prestige, multiplier, drones, totalClicks};
-  localStorage.setItem("cyberClashSave",JSON.stringify(saveData));
-}
-function loadGame(){
-  const data = JSON.parse(localStorage.getItem("cyberClashSave"));
-  if(data){
-    Object.assign(window, data);
-  }
-}
-setInterval(saveGame,1000);
-loadGame();
-
-// ======= Initialize =======
-initBots();
-updateUI();
-renderTab("upgrades");
+streetLevelBtn.addEventListener("click", () => {
+  const idx = Number(citySelectEl.value);
+  const city = LANDMARKS[idx] || LANDMARKS[0];
+  citySelectEl.value = String(LANDMARKS.indexOf(city));
+  flyToLandmark({ ...city, altitude: 260 });
+  setStatus(`Street-level view near ${city.name}.`);
+});
