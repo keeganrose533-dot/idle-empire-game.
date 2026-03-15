@@ -1,78 +1,143 @@
+:root {
+  color-scheme: dark;
+  --panel: linear-gradient(135deg, rgba(16,22,35,0.68), rgba(20,20,28,0.45));
+  --line: rgba(255, 255, 255, 0.25);
+}
+
+* { box-sizing: border-box; }
+
+html,
 body {
-  margin:0;
-  font-family: Arial, sans-serif;
-  background-color: #000;
-  color: #fff;
-}
-
-#game-container {
-  max-width: 800px;
-  margin: auto;
-  padding: 10px;
-}
-
-#header {
-  text-align: center;
-}
-
-#click-core {
-  font-size: 2rem;
-  padding: 20px;
-  margin: 20px auto;
-  display: block;
-  background-color: #222;
-  color: #fff;
-  border: 2px solid #fff;
-  border-radius: 10px;
-}
-
-#xp-bar {
-  width: 80%;
-  height: 20px;
-  background: #222;
-  margin: 10px auto;
-  border: 1px solid #fff;
-  border-radius: 5px;
-  position: relative;
-}
-
-#xp-fill {
-  height: 100%;
-  background: #0f0;
-  width: 0%;
-  border-radius: 5px;
-}
-
-#xp-text {
-  position: absolute;
+  margin: 0;
   width: 100%;
-  text-align: center;
-  top: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: Inter, system-ui, Arial, sans-serif;
+  background: #000;
   color: #fff;
-  font-size: 0.8rem;
+  touch-action: none;
 }
 
-#tabs {
+canvas {
+  display: block;
+}
+
+#overlay {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  max-width: min(92vw, 560px);
+  padding: 0.75rem 0.9rem;
+  background: var(--panel);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.32);
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+  backdrop-filter: blur(6px);
+  z-index: 30;
+}
+
+#overlay h1 {
+  margin: 0 0 0.4rem;
+  font-size: 1.1rem;
+}
+
+#overlay p {
+  margin: 0.2rem 0;
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+#start-btn,
+#visibility-btn,
+#toggle-overlay-btn {
+  margin-top: 0.5rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+#crosshair {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  font-size: 1.5rem;
+  line-height: 1;
+  text-shadow: 0 0 4px #000;
+  pointer-events: none;
+}
+
+#mobile-ui {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 25;
+  pointer-events: none;
+}
+
+.touch-pad {
+  position: absolute;
+  width: min(38vw, 180px);
+  aspect-ratio: 1;
+  bottom: calc(env(safe-area-inset-bottom) + 1rem);
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.08);
+  pointer-events: auto;
+}
+
+#left-pad { left: 1rem; }
+#right-pad { right: 1rem; }
+
+.stick {
+  position: absolute;
+  width: 40%;
+  aspect-ratio: 1;
+  left: 30%;
+  top: 30%;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+#mobile-buttons {
+  position: absolute;
+  right: 1rem;
+  top: max(1rem, env(safe-area-inset-top));
   display: flex;
-  justify-content: space-around;
-  margin: 10px 0;
+  gap: 0.45rem;
+  pointer-events: auto;
 }
 
-.tab-btn {
-  flex:1;
-  margin:0 5px;
-  padding:10px;
-  background:#111;
-  color:#fff;
-  border:none;
-  border-radius:5px;
-  font-size:1rem;
+#mobile-buttons button {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border-radius: 0.5rem;
+  padding: 0.45rem 0.7rem;
 }
 
-.tab-content {
-  display:none;
-  background:#111;
-  padding:10px;
-  margin-top:10px;
-  border-radius:5px;
+@media (max-width: 900px), (hover: none) {
+  #mobile-ui { display: block; }
+  #overlay { max-width: 95vw; font-size: 0.9rem;
+  line-height: 1.35; }
+}
+
+
+.overlay-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.55rem;
+}
+
+#overlay.minimized p,
+#overlay.minimized #status {
+  display: none;
+}
+
+#overlay.minimized {
+  max-width: 280px;
 }
