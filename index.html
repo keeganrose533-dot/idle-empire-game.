@@ -1,47 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Cyber Clash: Infinite Xtreme</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>BlockCraft 3D Mobile</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<div id="game-container">
-
-  <div id="header">
-    <h1>Cyber Clash</h1>
-    <div id="xp-bar">
-      <div id="xp-fill"></div>
-      <span id="xp-text">XP: 0 / 100</span>
+  <div id="overlay">
+    <h1>BlockCraft 3D</h1>
+    <p>Desktop: Click to lock, WASD move, Shift sprint, Space jump, E place, Q break, 1-5 select block.</p>
+    <p>Mobile: Left joystick move (push far to sprint), right swipe look, Jump / Place / Break buttons.</p>
+    <p id="status">Loading world...</p>
+    <div class="overlay-actions">
+      <button id="start-btn">Start / Re-center</button>
+      <button id="visibility-btn">High Visibility: ON</button>
+      <button id="toggle-overlay-btn">Hide HUD</button>
     </div>
-    <div id="energy-display">Energy: 0</div>
-    <div id="level-display">Level: 1</div>
-    <div id="rebirth-display">Rebirths: 0</div>
-    <div id="prestige-display">Prestige: 0</div>
   </div>
 
-  <div id="core-container">
-    <button id="click-core">PULSE CORE</button>
+  <div id="crosshair">+</div>
+
+  <div id="mobile-ui" aria-hidden="true">
+    <div id="left-pad" class="touch-pad"><div id="left-stick" class="stick"></div></div>
+    <div id="right-pad" class="touch-pad"><div id="right-stick" class="stick"></div></div>
+    <div id="mobile-buttons">
+      <button id="jump-btn">Jump</button>
+      <button id="break-btn">Break</button>
+      <button id="place-btn">Place</button>
+    </div>
   </div>
 
-  <div id="tabs">
-    <button class="tab-btn" data-tab="upgrades">Upgrades</button>
-    <button class="tab-btn" data-tab="leaderboard">Leaderboard</button>
-    <button class="tab-btn" data-tab="factions">Factions</button>
-    <button class="tab-btn" data-tab="stats">Stats</button>
-    <button class="tab-btn" data-tab="achievements">Achievements</button>
-  </div>
-
-  <div id="tab-contents">
-    <div id="upgrades" class="tab-content"></div>
-    <div id="leaderboard" class="tab-content"></div>
-    <div id="factions" class="tab-content"></div>
-    <div id="stats" class="tab-content"></div>
-    <div id="achievements" class="tab-content"></div>
-  </div>
-
-</div>
-<script src="script.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 </html>
